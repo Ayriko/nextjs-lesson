@@ -4,6 +4,16 @@ import Link from "next/link";
 import ProductImageGallery from "@/app/domains/catalog/components/ProductImageGallery";
 import AddToCartButton from "@/app/domains/catalog/components/AddToCartButton";
 
+export async function generateStaticParams() {
+  const products = await prisma.product.findMany({
+    select: { slug: true },
+  });
+
+  return products.map((product) => ({
+    slug: product.slug,
+  }));
+}
+
 export default async function ProductPage({
   params,
 }: {
