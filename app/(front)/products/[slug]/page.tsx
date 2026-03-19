@@ -4,6 +4,8 @@ import Link from "next/link";
 import ProductImageGallery from "@/app/domains/catalog/components/ProductImageGallery";
 import AddToCartButton from "@/app/domains/catalog/components/AddToCartButton";
 
+export const dynamic = 'force-dynamic'
+
 // Next.js will invalidate the cache when a
 // request comes in, at most once every 60 seconds.
 export const revalidate = 60
