@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Cart {
+  id        String     @id
+  sessionId String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime
+  CartItem  CartItem[]
+}
+
+model CartItem {
+  id        String  @id
+  cartId    String
+  productId String
+  quantity  Int     @default(1)
+  name      String
+  price     Float
+  currency  String
+  Product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  Cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId])
+}
+
+model Product {
+  id                                                      String           @id
+  name                                                    String
+  slug                                                    String           @unique
+  description                                             String
+  price                                                   Float
+  currency                                                String           @default("EUR")
+  stock                                                   Int              @default(0)
+  sku                                                     String           @unique
+  category                                                String
+  brand                                                   String
+  images                                                  Json
+  specs                                                   Json
+  createdAt                                               DateTime         @default(now())
+  updatedAt                                               DateTime
+  CartItem                                                CartItem[]
+  SimilarProduct_SimilarProduct_similarProductIdToProduct SimilarProduct[] @relation("SimilarProduct_similarProductIdToProduct")
+  SimilarProduct_SimilarProduct_productIdToProduct        SimilarProduct[] @relation("SimilarProduct_productIdToProduct")
+}
+
+model SimilarProduct {
+  id                                               String  @id
+  productId                                        String
+  similarProductId                                 String
+  score                                            Float?
+  Product_SimilarProduct_similarProductIdToProduct Product @relation("SimilarProduct_similarProductIdToProduct", fields: [similarProductId], references: [id], onDelete: Cascade)
+  Product_SimilarProduct_productIdToProduct        Product @relation("SimilarProduct_productIdToProduct", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, similarProductId])
+}
+
+model User {
+  id        String   @id
+  email     String   @unique
+  name      String?
+  password  String?
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
