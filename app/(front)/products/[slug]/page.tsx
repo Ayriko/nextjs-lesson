@@ -4,6 +4,10 @@ import Link from "next/link";
 import ProductImageGallery from "@/app/domains/catalog/components/ProductImageGallery";
 import AddToCartButton from "@/app/domains/catalog/components/AddToCartButton";
 
+// Next.js will invalidate the cache when a
+// request comes in, at most once every 60 seconds.
+export const revalidate = 60
+
 export async function generateStaticParams() {
   const products = await prisma.product.findMany({
     select: { slug: true },
