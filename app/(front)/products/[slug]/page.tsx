@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import products from "@/app/domains/catalog/data/products.json";
+import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,11 +10,15 @@ export default async function ProductPage({
 }) {
   const { slug } = await params;
 
-  const product = products.find((p) => p.slug === slug);
+  const product = await prisma.product.findUnique({
+    where: { slug },
+  });
 
   if (!product) {
     notFound();
   }
+
+  const images = product.images as { main: string };
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
@@ -25,7 +29,7 @@ export default async function ProductPage({
       <p className="mt-2 text-zinc-500">{product.category}</p>
       <div className="relative mt-6 h-96 w-full">
         <Image
-          src={product.images.main}
+          src={images.main}
           alt={product.name}
           fill
           className="rounded-xl object-cover"
