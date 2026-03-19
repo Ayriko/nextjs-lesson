@@ -1,14 +1,37 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useCart } from "@/app/contexts/CartContext";
+import { useRouter } from "next/navigation";
+
+type CartItem = {
+  id: string;
+  productId: string;
+  name: string;
+  price: number;
+  currency: string;
+  quantity: number;
+};
 
 export default function CartIcon() {
-  const { items, totalItems, removeItem } = useCart();
+  const [items, setItems] = useState<CartItem[]>([]);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  async function fetchCart() {
+    const res = await fetch("/api/cart");
+    const data = await res.json();
+    setItems(data);
+  }
+
+  useEffect(() => {
+    fetchCart();
+    window.addEventListener("cart:updated", fetchCart);
+    return () => window.removeEventListener("cart:updated", fetchCart);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -19,6 +42,15 @@ export default function CartIcon() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  async function removeItem(productId: string) {
+    await fetch("/api/cart", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId }),
+    });
+    fetchCart();
+  }
 
   return (
     <div className="relative" ref={ref}>
@@ -43,10 +75,7 @@ export default function CartIcon() {
                     <span>{item.name} × {item.quantity}</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{(item.price * item.quantity).toFixed(2)} {item.currency}</span>
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="text-zinc-400 hover:text-red-500"
-                      >
+                      <button onClick={() => removeItem(item.productId)} className="text-zinc-400 hover:text-red-500">
                         ✕
                       </button>
                     </div>

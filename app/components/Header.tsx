@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CartIcon from "@/app/components/CartIcon";
+import { Suspense } from "react";
 
 export default function Header() {
     return (
@@ -25,7 +26,9 @@ export default function Header() {
                         </Link>
                     </li>
                     <li>
-                        <CartIcon />
+                        <Suspense fallback={<span className="text-xl">🛒</span>}>
+                            <CartIcon />
+                        </Suspense>
                     </li>
                 </ul>
             </nav>

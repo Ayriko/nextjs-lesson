@@ -3,12 +3,13 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ProductImageGallery from "@/app/domains/catalog/components/ProductImageGallery";
 import AddToCartButton from "@/app/domains/catalog/components/AddToCartButton";
+import ProductCard from "@/app/domains/catalog/components/ProductCard";
 
-export const dynamic = 'force-dynamic'
+//export const dynamic = 'force-dynamic'
 
 // Next.js will invalidate the cache when a
 // request comes in, at most once every 60 seconds.
-export const revalidate = 60
+// export const revalidate = 60
 
 export async function generateStaticParams() {
   const products = await prisma.product.findMany({
@@ -37,6 +38,14 @@ export default async function ProductPage({
 
   const images = product.images as { main: string; gallery: string[] };
 
+  const similarProducts = await prisma.product.findMany({
+    where: {
+      category: product.category,
+      NOT: { id: product.id },
+    },
+    take: 4,
+  });
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <Link href="/" className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
@@ -50,6 +59,22 @@ export default async function ProductPage({
         <p className="text-xl font-bold">{product.price} {product.currency}</p>
         <AddToCartButton product={{ id: product.id, name: product.name, price: product.price, currency: product.currency, stock: product.stock }} />
       </div>
+      {similarProducts.length > 0 && (
+        <section className="mt-16">
+          <h2 className="text-xl font-semibold">Produits similaires</h2>
+          <div className="mt-6 grid grid-cols-4 gap-6">
+            {similarProducts.map((similar) => (
+              <ProductCard
+                key={similar.id}
+                product={{
+                  ...similar,
+                  images: similar.images as { main: string },
+                }}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
