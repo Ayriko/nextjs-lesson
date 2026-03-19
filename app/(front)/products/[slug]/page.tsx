@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import Image from "next/image";
 import Link from "next/link";
+import ProductImageGallery from "@/app/domains/catalog/components/ProductImageGallery";
+import AddToCartButton from "@/app/domains/catalog/components/AddToCartButton";
 
 export default async function ProductPage({
   params,
@@ -18,7 +19,7 @@ export default async function ProductPage({
     notFound();
   }
 
-  const images = product.images as { main: string };
+  const images = product.images as { main: string; gallery: string[] };
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
@@ -27,20 +28,11 @@ export default async function ProductPage({
       </Link>
       <h1 className="mt-4 text-2xl font-semibold">{product.name}</h1>
       <p className="mt-2 text-zinc-500">{product.category}</p>
-      <div className="relative mt-6 h-96 w-full">
-        <Image
-          src={images.main}
-          alt={product.name}
-          fill
-          className="rounded-xl object-cover"
-        />
-      </div>
+      <ProductImageGallery images={images} alt={product.name} />
       <p className="mt-6 text-zinc-700 dark:text-zinc-300">{product.description}</p>
       <div className="mt-4 flex items-center gap-6">
         <p className="text-xl font-bold">{product.price} {product.currency}</p>
-        <button className="rounded-xl bg-zinc-900 px-6 py-2 text-white dark:bg-white dark:text-zinc-900">
-          Ajouter au panier
-        </button>
+        <AddToCartButton product={{ id: product.id, name: product.name, price: product.price, currency: product.currency, stock: product.stock }} />
       </div>
     </div>
   );

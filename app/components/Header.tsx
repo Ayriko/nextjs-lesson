@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CartIcon from "@/app/components/CartIcon";
 
 export default function Header() {
     return (
@@ -7,10 +8,15 @@ export default function Header() {
                 <Link href="/" className="text-xl font-semibold">
                     Ma boutique trop bien
                 </Link>
-                <ul className="flex gap-6">
+                <ul className="flex items-center gap-6">
                     <li>
                         <Link href="/" className="hover:underline">
                             Accueil
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/admin" className="hover:underline">
+                            Admin
                         </Link>
                     </li>
                     <li>
@@ -19,9 +25,7 @@ export default function Header() {
                         </Link>
                     </li>
                     <li>
-                        <Link href="/admin" className="hover:underline">
-                            Admin
-                        </Link>
+                        <CartIcon />
                     </li>
                 </ul>
             </nav>
