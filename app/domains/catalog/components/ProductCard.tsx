@@ -8,36 +8,35 @@ type Product = {
   currency: string;
   category: string;
   stock: number;
-  images: {
-    main: string;
-  };
+  images: { main: string };
 };
 
-type Props = {
-  product: Product;
-};
-
-export default function ProductCard({ product }: Props) {
+export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/products/${product.slug}`} className="block group">
-      <article style={{ background: "var(--bg)" }}>
+      <article
+        style={{
+          background: "var(--surface)",
+          borderRadius: "12px",
+          overflow: "hidden",
+          border: "1px solid var(--border)",
+          transition: "box-shadow 0.3s ease, transform 0.3s ease",
+        }}
+        className="hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-0.5"
+      >
         {/* Image */}
-        <div
-          className="relative overflow-hidden"
-          style={{ aspectRatio: "4 / 5" }}
-        >
+        <div className="relative overflow-hidden" style={{ aspectRatio: "4 / 5" }}>
           <img
             src={product.images.main}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
 
-          {/* Gradient overlay */}
+          {/* Soft gradient overlay */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background:
-                "linear-gradient(to top, rgba(13,12,16,0.6) 0%, transparent 50%)",
+              background: "linear-gradient(to top, rgba(237,232,223,0.55) 0%, transparent 45%)",
             }}
           />
 
@@ -47,33 +46,33 @@ export default function ProductCard({ product }: Props) {
             style={{
               fontFamily: "var(--font-jost)",
               fontSize: "0.58rem",
-              letterSpacing: "0.2em",
+              letterSpacing: "0.18em",
               textTransform: "uppercase",
               color: "var(--accent)",
-              background: "rgba(13,12,16,0.75)",
+              background: "rgba(246,242,236,0.82)",
               backdropFilter: "blur(6px)",
               border: "1px solid var(--border)",
               padding: "0.25rem 0.6rem",
-              borderRadius: "2px",
+              borderRadius: "20px",
             }}
           >
             {product.category}
           </span>
 
-          {/* Out of stock */}
           {product.stock === 0 && (
             <span
               className="absolute top-3 right-3"
               style={{
                 fontFamily: "var(--font-jost)",
                 fontSize: "0.58rem",
-                letterSpacing: "0.15em",
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 color: "var(--muted)",
-                background: "rgba(13,12,16,0.85)",
+                background: "rgba(246,242,236,0.82)",
+                backdropFilter: "blur(6px)",
                 border: "1px solid var(--border)",
                 padding: "0.25rem 0.6rem",
-                borderRadius: "2px",
+                borderRadius: "20px",
               }}
             >
               Rupture
@@ -82,7 +81,7 @@ export default function ProductCard({ product }: Props) {
         </div>
 
         {/* Info */}
-        <div className="px-5 py-4" style={{ borderTop: "1px solid var(--border)" }}>
+        <div className="px-5 py-4">
           <h2
             style={{
               fontFamily: "var(--font-cormorant)",

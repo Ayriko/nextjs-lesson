@@ -33,10 +33,7 @@ export default async function SimilarProducts({ category, excludeId }: Props) {
       >
         Dans la même catégorie
       </p>
-      <div
-        className="grid grid-cols-2 lg:grid-cols-4 gap-px"
-        style={{ background: "var(--border)" }}
-      >
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {similarProducts.map((similar) => (
           <ProductCard
             key={similar.id}

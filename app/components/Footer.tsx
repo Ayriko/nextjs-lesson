@@ -2,9 +2,8 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer style={{ borderTop: "1px solid var(--border)" }}>
-      <div className="mx-auto max-w-7xl px-6 py-12 grid grid-cols-1 sm:grid-cols-3 gap-10">
-        {/* Brand */}
+    <footer style={{ borderTop: "1px solid var(--border)", background: "var(--surface)" }}>
+      <div className="mx-auto max-w-screen-2xl px-8 py-14 grid grid-cols-1 sm:grid-cols-3 gap-10">
         <div>
           <p
             style={{
@@ -21,17 +20,16 @@ export default function Footer() {
           <p
             style={{
               fontFamily: "var(--font-jost)",
-              fontSize: "0.78rem",
+              fontSize: "0.8rem",
               color: "var(--muted)",
               marginTop: "0.6rem",
-              lineHeight: 1.6,
+              lineHeight: 1.7,
             }}
           >
             Technologie raffinée,<br />sélectionnée pour les esprits exigeants.
           </p>
         </div>
 
-        {/* Navigation */}
         <div>
           <p
             style={{
@@ -67,19 +65,16 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Legal */}
         <div className="sm:text-right">
           <p
             style={{
               fontFamily: "var(--font-jost)",
               fontSize: "0.72rem",
               color: "var(--muted)",
-              lineHeight: 1.8,
+              lineHeight: 1.9,
             }}
           >
-            © 2026 Ma boutique trop bien.
-            <br />
-            Tous droits réservés.
+            © 2026 Ma boutique trop bien.<br />Tous droits réservés.
           </p>
         </div>
       </div>

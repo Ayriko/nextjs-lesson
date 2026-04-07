@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0d0c10;
-  --surface: #16151b;
-  --surface-raised: #1e1d24;
-  --border: #272530;
-  --text: #f0ebe3;
-  --muted: #706d79;
-  --accent: #e8b84b;
-  --accent-dim: rgba(232, 184, 75, 0.1);
+  --bg: #F6F2EC;
+  --surface: #EDE8DF;
+  --surface-raised: #E3DDD3;
+  --border: #D5CEC4;
+  --text: #1E1B18;
+  --muted: #918D87;
+  --accent: #B5715A;
+  --accent-dim: rgba(181, 113, 90, 0.1);
+  --bg-glass: rgba(246, 242, 236, 0.88);
 }
 
 @theme inline {
@@ -16,6 +17,10 @@
   --color-foreground: var(--text);
   --font-display: var(--font-cormorant);
   --font-body: var(--font-jost);
+}
+
+html {
+  font-size: 18px;
 }
 
 body {
@@ -26,18 +31,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-::-webkit-scrollbar {
-  width: 3px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 2px;
-}
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-::selection {
-  background: var(--accent);
-  color: var(--bg);
-}
+::selection { background: var(--accent); color: var(--bg); }

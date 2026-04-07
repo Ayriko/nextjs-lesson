@@ -14,13 +14,17 @@ export type MockShopProduct = {
   images: Array<{ url: string; altText: string | null }>;
 };
 
-async function gql<T>(query: string): Promise<T> {
+async function gql<T>(query: string, options?: RequestInit): Promise<T> {
+  const start = performance.now();
+
   const res = await fetch(ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query }),
-    next: { revalidate: 3600 },
+    ...options,
   });
+
+  console.log(`[mock.shop] fetch ${(performance.now() - start).toFixed(0)}ms`);
 
   if (!res.ok) throw new Error(`mock.shop API error: ${res.status}`);
   const json = await res.json();
@@ -48,17 +52,26 @@ function normalizeProduct(node: {
 export async function getSponsoredProducts(count = 4): Promise<MockShopProduct[]> {
   const data = await gql<{
     products: { edges: Array<{ node: Parameters<typeof normalizeProduct>[0] }> };
-  }>(`{
-    products(first: ${count}) {
-      edges {
-        node {
-          id title handle description
-          priceRange { minVariantPrice { amount currencyCode } }
-          images(first: 1) { edges { node { url altText } } }
+  }>(
+    `{
+      products(first: ${count}) {
+        edges {
+          node {
+            id title handle description
+            priceRange { minVariantPrice { amount currencyCode } }
+            images(first: 1) { edges { node { url altText } } }
+          }
         }
       }
+    }`,
+    {
+      // "force-cache"  → toujours depuis le cache (défaut Next.js)
+      // "no-store"     → jamais de cache, toujours frais
+      // next: { revalidate: 60 } → ISR : revalidation toutes les 60s
+      // next: { tags: ["sponsored"] } → revalidation ciblée par tag
+      next: { revalidate: 3600, tags: ["sponsored"] },
     }
-  }`);
+  );
 
   return data.products.edges.map((e) => normalizeProduct(e.node));
 }
@@ -66,13 +79,18 @@ export async function getSponsoredProducts(count = 4): Promise<MockShopProduct[]
 export async function getSponsoredProduct(handle: string): Promise<MockShopProduct | null> {
   const data = await gql<{
     product: Parameters<typeof normalizeProduct>[0] | null;
-  }>(`{
-    product(handle: "${handle}") {
-      id title handle description
-      priceRange { minVariantPrice { amount currencyCode } }
-      images(first: 6) { edges { node { url altText } } }
+  }>(
+    `{
+      product(handle: "${handle}") {
+        id title handle description
+        priceRange { minVariantPrice { amount currencyCode } }
+        images(first: 6) { edges { node { url altText } } }
+      }
+    }`,
+    {
+      next: { revalidate: 3600, tags: ["sponsored"] },
     }
-  }`);
+  );
 
   return data.product ? normalizeProduct(data.product) : null;
 }

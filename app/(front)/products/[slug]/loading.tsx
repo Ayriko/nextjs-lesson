@@ -2,7 +2,7 @@ import ProductDetailSkeleton from "@/app/domains/catalog/components/ProductDetai
 
 export default function Loading() {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-12">
+    <div className="mx-auto max-w-screen-xl px-8 py-14">
       <ProductDetailSkeleton />
     </div>
   );

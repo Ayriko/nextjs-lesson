@@ -4,13 +4,8 @@ import ProductDetail from "@/app/domains/catalog/components/ProductDetail";
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const products = await prisma.product.findMany({
-    select: { slug: true },
-  });
-
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
+  const products = await prisma.product.findMany({ select: { slug: true } });
+  return products.map((p) => ({ slug: p.slug }));
 }
 
 export default async function ProductPage({
@@ -21,7 +16,7 @@ export default async function ProductPage({
   const { slug } = await params;
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-12">
+    <div className="mx-auto max-w-screen-xl px-8 py-14">
       <ProductDetail slug={slug} />
     </div>
   );

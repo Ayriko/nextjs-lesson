@@ -13,14 +13,13 @@ export default function Header() {
     <header
       className="sticky top-0 z-50"
       style={{
-        background: "rgba(13, 12, 16, 0.88)",
+        background: "var(--bg-glass)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
         borderBottom: "1px solid var(--border)",
       }}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        {/* Logo */}
+      <nav className="mx-auto flex max-w-screen-2xl items-center justify-between px-8 py-5">
         <Link
           href="/"
           style={{
@@ -35,8 +34,7 @@ export default function Header() {
           Ma boutique
         </Link>
 
-        {/* Nav */}
-        <ul className="flex items-center gap-9">
+        <ul className="flex items-center gap-10">
           {NAV.map(({ label, href }) => (
             <li key={href} className="hidden sm:block">
               <Link
@@ -58,9 +56,7 @@ export default function Header() {
           <li>
             <Suspense
               fallback={
-                <span style={{ color: "var(--accent)", fontSize: "1.1rem" }}>
-                  ◯
-                </span>
+                <span style={{ color: "var(--accent)", fontSize: "1.1rem" }}>◯</span>
               }
             >
               <CartIcon />
