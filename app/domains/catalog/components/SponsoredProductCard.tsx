@@ -1,36 +1,32 @@
 import Link from "next/link";
-
-type Product = {
-  id: string;
-  slug: string;
-  name: string;
-  price: number;
-  currency: string;
-  category: string;
-  stock: number;
-  images: {
-    main: string;
-  };
-};
+import type { MockShopProduct } from "@/lib/mockshop";
 
 type Props = {
-  product: Product;
+  product: MockShopProduct;
 };
 
-export default function ProductCard({ product }: Props) {
+export default function SponsoredProductCard({ product }: Props) {
+  const image = product.images[0];
+  const price = parseFloat(product.priceRange.minVariantPrice.amount);
+  const currency = product.priceRange.minVariantPrice.currencyCode;
+
   return (
-    <Link href={`/products/${product.slug}`} className="block group">
+    <Link href={`/products/sponsored/${product.handle}`} className="block group">
       <article style={{ background: "var(--bg)" }}>
         {/* Image */}
         <div
           className="relative overflow-hidden"
           style={{ aspectRatio: "4 / 5" }}
         >
-          <img
-            src={product.images.main}
-            alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          />
+          {image ? (
+            <img
+              src={image.url}
+              alt={image.altText ?? product.title}
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+          ) : (
+            <div style={{ width: "100%", height: "100%", background: "var(--surface)" }} />
+          )}
 
           {/* Gradient overlay */}
           <div
@@ -41,7 +37,7 @@ export default function ProductCard({ product }: Props) {
             }}
           />
 
-          {/* Category badge */}
+          {/* Sponsored badge */}
           <span
             className="absolute top-3 left-3"
             style={{
@@ -49,36 +45,14 @@ export default function ProductCard({ product }: Props) {
               fontSize: "0.58rem",
               letterSpacing: "0.2em",
               textTransform: "uppercase",
-              color: "var(--accent)",
-              background: "rgba(13,12,16,0.75)",
-              backdropFilter: "blur(6px)",
-              border: "1px solid var(--border)",
+              color: "var(--bg)",
+              background: "var(--accent)",
               padding: "0.25rem 0.6rem",
               borderRadius: "2px",
             }}
           >
-            {product.category}
+            Sponsorisé
           </span>
-
-          {/* Out of stock */}
-          {product.stock === 0 && (
-            <span
-              className="absolute top-3 right-3"
-              style={{
-                fontFamily: "var(--font-jost)",
-                fontSize: "0.58rem",
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                color: "var(--muted)",
-                background: "rgba(13,12,16,0.85)",
-                border: "1px solid var(--border)",
-                padding: "0.25rem 0.6rem",
-                borderRadius: "2px",
-              }}
-            >
-              Rupture
-            </span>
-          )}
         </div>
 
         {/* Info */}
@@ -94,7 +68,7 @@ export default function ProductCard({ product }: Props) {
             }}
             className="group-hover:text-[var(--accent)]"
           >
-            {product.name}
+            {product.title}
           </h2>
           <div className="mt-3 flex items-center justify-between">
             <span
@@ -105,9 +79,9 @@ export default function ProductCard({ product }: Props) {
                 color: "var(--text)",
               }}
             >
-              {product.price}{" "}
+              {price.toFixed(2)}{" "}
               <span style={{ color: "var(--muted)", fontWeight: 400 }}>
-                {product.currency}
+                {currency}
               </span>
             </span>
             <span

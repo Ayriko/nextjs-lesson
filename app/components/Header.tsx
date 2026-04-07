@@ -2,36 +2,72 @@ import Link from "next/link";
 import CartIcon from "@/app/components/CartIcon";
 import { Suspense } from "react";
 
+const NAV = [
+  { label: "Accueil", href: "/" },
+  { label: "Admin", href: "/admin" },
+  { label: "À propos", href: "/about" },
+];
+
 export default function Header() {
-    return (
-        <header className="border-b border-zinc-200 dark:border-zinc-800">
-            <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-                <Link href="/" className="text-xl font-semibold">
-                    Ma boutique trop bien
-                </Link>
-                <ul className="flex items-center gap-6">
-                    <li>
-                        <Link href="/" className="hover:underline">
-                            Accueil
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/admin" className="hover:underline">
-                            Admin
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/about" className="hover:underline">
-                            À propos
-                        </Link>
-                    </li>
-                    <li>
-                        <Suspense fallback={<span className="text-xl">🛒</span>}>
-                            <CartIcon />
-                        </Suspense>
-                    </li>
-                </ul>
-            </nav>
-        </header>
-    );
+  return (
+    <header
+      className="sticky top-0 z-50"
+      style={{
+        background: "rgba(13, 12, 16, 0.88)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        borderBottom: "1px solid var(--border)",
+      }}
+    >
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        {/* Logo */}
+        <Link
+          href="/"
+          style={{
+            fontFamily: "var(--font-cormorant)",
+            fontSize: "1.25rem",
+            fontWeight: 600,
+            letterSpacing: "0.18em",
+            color: "var(--text)",
+            textTransform: "uppercase",
+          }}
+        >
+          Ma boutique
+        </Link>
+
+        {/* Nav */}
+        <ul className="flex items-center gap-9">
+          {NAV.map(({ label, href }) => (
+            <li key={href} className="hidden sm:block">
+              <Link
+                href={href}
+                style={{
+                  fontFamily: "var(--font-jost)",
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: "var(--muted)",
+                  transition: "color 0.2s",
+                }}
+                className="hover:text-[var(--text)]"
+              >
+                {label}
+              </Link>
+            </li>
+          ))}
+          <li>
+            <Suspense
+              fallback={
+                <span style={{ color: "var(--accent)", fontSize: "1.1rem" }}>
+                  ◯
+                </span>
+              }
+            >
+              <CartIcon />
+            </Suspense>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  );
 }
