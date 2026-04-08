@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Jost } from "next/font/google";
 import "./globals.css";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import Providers from "@/app/components/Providers";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -29,9 +30,11 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={`${cormorant.variable} ${jost.variable} antialiased flex flex-col min-h-screen`}>
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <Providers>
+          <Header />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
