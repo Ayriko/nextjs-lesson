@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { ProductUpdateSchema } from "@/lib/schemas/product";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export type UpdateProductState = {
   errors?: Partial<Record<keyof typeof ProductUpdateSchema.shape, string[]>>;
@@ -47,9 +47,11 @@ export async function updateProduct(
     data: { ...result.data, updatedAt: new Date() },
   });
 
-  // Invalide le cache de la page détail et de la liste admin
-  revalidatePath(`/products`);
-  revalidatePath(`/admin/products`);
+  // Invalide le cache unstable_cache tagué "products" → prochain appel getProducts() re-query la DB
+  revalidateTag("products", "max");
+  // Invalide aussi les pages en cache de rendu
+  revalidatePath("/");
+  revalidatePath("/admin/products");
 
   return { success: true, message: "Produit mis à jour." };
 }

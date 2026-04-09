@@ -19,6 +19,7 @@ type Props = {
  * C'est la technique standard pour passer des paramètres statiques à une
  * Server Action utilisée dans useActionState.
  */
+
 export default function EditProductForm({ id, defaultValues }: Props) {
   const updateWithId = updateProduct.bind(null, id);
   const [state, formAction, isPending] = useActionState<UpdateProductState, FormData>(

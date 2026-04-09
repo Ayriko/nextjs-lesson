@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { getProducts } from "@/lib/products";
 import { getSponsoredProducts } from "@/lib/mockshop";
 import ProductCard from "@/app/domains/catalog/components/ProductCard";
 import SponsoredProductCard from "@/app/domains/catalog/components/SponsoredProductCard";
@@ -6,7 +6,7 @@ import RefreshSponsoredButton from "@/app/domains/catalog/components/RefreshSpon
 
 export default async function Home() {
   const [products, sponsored] = await Promise.all([
-    prisma.product.findMany({ orderBy: { name: "asc" } }),
+    getProducts(),
     getSponsoredProducts(4).catch(() => []),
   ]);
 

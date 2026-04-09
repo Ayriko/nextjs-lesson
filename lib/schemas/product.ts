@@ -12,14 +12,15 @@ import { z } from "zod";
  * Les données arrivent depuis FormData (tout est string) → on coerce les
  * nombres avec z.coerce.number() au lieu de z.number().
  */
+
 export const ProductUpdateSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
   description: z.string().min(1, "La description est requise"),
   price: z.coerce
-    .number({ invalid_type_error: "Le prix doit être un nombre" })
+    .number({ error: "Le prix doit être un nombre" })
     .positive("Le prix doit être positif"),
   stock: z.coerce
-    .number({ invalid_type_error: "Le stock doit être un nombre" })
+    .number({ error: "Le stock doit être un nombre" })
     .int("Le stock doit être un entier")
     .min(0, "Le stock ne peut pas être négatif"),
   category: z.string().min(1, "La catégorie est requise"),
