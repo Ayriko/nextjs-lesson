@@ -21,6 +21,7 @@ export default function ProductImageGallery({ images, alt }: Props) {
           src={current}
           alt={alt}
           fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
           className="rounded-xl object-cover"
         />
       </div>
@@ -36,6 +37,7 @@ export default function ProductImageGallery({ images, alt }: Props) {
               src={src}
               alt={`${alt} ${index + 1}`}
               fill
+              sizes="80px"
               className="object-cover"
             />
           </div>

@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default async function SimilarProducts({ category, excludeId }: Props) {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  //await new Promise((resolve) => setTimeout(resolve, 500));
 
   const similarProducts = await prisma.product.findMany({
     where: {

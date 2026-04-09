@@ -3,12 +3,13 @@ import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ProductImageGallery from "./ProductImageGallery";
+import ProductTabs from "./ProductTabs";
 import AddToCartButton from "./AddToCartButton";
 import SimilarProducts from "./SimilarProducts";
 import SimilarProductsSkeleton from "./SimilarProductsSkeleton";
 
 export default async function ProductDetail({ slug }: { slug: string }) {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  //await new Promise((resolve) => setTimeout(resolve, 500));
 
   const product = await prisma.product.findUnique({ where: { slug } });
   if (!product) notFound();
@@ -71,16 +72,15 @@ export default async function ProductDetail({ slug }: { slug: string }) {
 
           <div style={{ height: "1px", background: "var(--border)", margin: "2rem 0" }} />
 
-          <p
-            style={{
-              fontFamily: "var(--font-jost)",
-              fontSize: "0.9rem",
-              color: "var(--muted)",
-              lineHeight: 1.85,
-            }}
-          >
-            {product.description}
-          </p>
+          <ProductTabs
+            description={product.description}
+            specs={[
+              { label: "Marque",    value: product.brand },
+              { label: "Catégorie", value: product.category },
+              { label: "Stock",     value: `${product.stock} unités` },
+              { label: "Référence", value: product.id.slice(0, 8).toUpperCase() },
+            ]}
+          />
 
           {product.stock > 0 && product.stock <= 10 && (
             <p
