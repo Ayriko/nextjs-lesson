@@ -1,43 +1,21 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { login } from "@/app/actions/auth";
+import AuthField from "@/app/components/AuthField";
 import Link from "next/link";
 
-type State = { error?: string; success?: boolean } | null;
-
-/**
- * Ici l'action n'est PAS un Server Action ("use server") car signIn()
- * de next-auth/react est une fonction client qui poste vers /api/auth/callback.
- * On utilise quand même useActionState pour gérer l'état du formulaire
- * de façon cohérente avec le reste du TP.
- */
-async function loginAction(_prevState: State, formData: FormData): Promise<State> {
-  const result = await signIn("credentials", {
-    email: formData.get("email"),
-    password: formData.get("password"),
-    redirect: false, // on gère la redirection nous-mêmes
-  });
-
-  if (result?.error) {
-    return { error: "Email ou mot de passe incorrect." };
-  }
-
-  return { success: true };
-}
-
 export default function LoginPage() {
-  const router = useRouter();
-  const [state, formAction, isPending] = useActionState(loginAction, null);
+  const [state, formAction, isPending] = useActionState(login, null);
 
-  // Quand l'action retourne { success: true }, on redirige
+  /**
+   * Le Server Action a posé le cookie → on navigue avec window.location.href
+   * (pas router.push) pour forcer une vraie requête HTTP et que le header
+   * lise la session fraîche depuis le serveur.
+   */
   useEffect(() => {
-    if (state?.success) {
-      router.refresh(); // force le re-render des Server Components (Header)
-      router.push("/");
-    }
-  }, [state, router]);
+    if (state?.success) window.location.href = "/";
+  }, [state]);
 
   return (
     <div className="mx-auto max-w-md px-6 py-20" style={{ minHeight: "60vh" }}>
@@ -117,10 +95,7 @@ export default function LoginPage() {
         }}
       >
         Pas encore de compte ?{" "}
-        <Link
-          href="/register"
-          style={{ color: "var(--accent)", textDecoration: "underline" }}
-        >
+        <Link href="/register" style={{ color: "var(--accent)", textDecoration: "underline" }}>
           S&apos;inscrire
         </Link>
       </p>
@@ -128,50 +103,3 @@ export default function LoginPage() {
   );
 }
 
-function AuthField({
-  label,
-  name,
-  type,
-  placeholder,
-}: {
-  label: string;
-  name: string;
-  type: string;
-  placeholder: string;
-}) {
-  return (
-    <label className="flex flex-col gap-1.5">
-      <span
-        style={{
-          fontFamily: "var(--font-jost)",
-          fontSize: "0.65rem",
-          letterSpacing: "0.15em",
-          textTransform: "uppercase",
-          color: "var(--muted)",
-        }}
-      >
-        {label}
-      </span>
-      <input
-        name={name}
-        type={type}
-        placeholder={placeholder}
-        required
-        style={{
-          fontFamily: "var(--font-jost)",
-          fontSize: "0.95rem",
-          color: "var(--text)",
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "8px",
-          padding: "0.7rem 1rem",
-          outline: "none",
-          transition: "border-color 0.2s",
-          width: "100%",
-        }}
-        onFocus={(e) => (e.currentTarget.style.borderColor = "var(--accent)")}
-        onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
-      />
-    </label>
-  );
-}
