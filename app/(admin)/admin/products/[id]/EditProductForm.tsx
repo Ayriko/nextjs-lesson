@@ -29,6 +29,22 @@ export default function EditProductForm({ id, defaultValues }: Props) {
 
   return (
     <form action={formAction} className="flex flex-col gap-6 mt-8">
+      {state?.error && (
+        <div
+          style={{
+            fontFamily: "var(--font-jost)",
+            fontSize: "0.85rem",
+            color: "#b94040",
+            background: "rgba(185,64,64,0.08)",
+            border: "1px solid rgba(185,64,64,0.25)",
+            padding: "0.6rem 0.9rem",
+            borderRadius: "8px",
+          }}
+        >
+          {state.error}
+        </div>
+      )}
+
       {state?.success && (
         <div
           style={{
@@ -89,7 +105,7 @@ export default function EditProductForm({ id, defaultValues }: Props) {
         errors={state?.errors?.description}
       />
 
-      <div>
+      <div className="flex gap-3">
         <button
           type="submit"
           disabled={isPending}
@@ -108,6 +124,28 @@ export default function EditProductForm({ id, defaultValues }: Props) {
           }}
         >
           {isPending ? "Enregistrement…" : "Enregistrer les modifications"}
+        </button>
+
+        <button
+          type="submit"
+          name="_intent"
+          value="test_error"
+          disabled={isPending}
+          style={{
+            fontFamily: "var(--font-jost)",
+            fontSize: "0.7rem",
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "#b94040",
+            background: "transparent",
+            border: "1px solid rgba(185,64,64,0.35)",
+            padding: "0.8rem 1.5rem",
+            borderRadius: "8px",
+            cursor: isPending ? "default" : "pointer",
+            transition: "border-color 0.2s",
+          }}
+        >
+          Tester une erreur
         </button>
       </div>
     </form>

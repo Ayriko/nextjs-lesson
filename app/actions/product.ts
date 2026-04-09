@@ -1,30 +1,32 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
 import { ProductUpdateSchema } from "@/lib/schemas/product";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 export type UpdateProductState = {
   errors?: Partial<Record<keyof typeof ProductUpdateSchema.shape, string[]>>;
   success?: boolean;
+  error?: string;    // erreur globale (DB KO, test, etc.)
   message?: string;
 } | null;
 
-/**
- * Server Action de mise à jour produit — flux :
- *
- *  1. Extraire les champs depuis FormData (tout est string à ce stade)
- *  2. safeParse() — Zod valide et coerce les types (ex: "149.99" → 149.99)
- *     → si invalide : retourner les erreurs par champ (pas d'exception)
- *     → si valide   : `result.data` est typé ProductUpdate garanti propre
- *  3. Prisma update en base
- *  4. revalidatePath() pour invalider le cache de la page produit
- */
 export async function updateProduct(
   id: string,
   _prevState: UpdateProductState,
   formData: FormData
 ): Promise<UpdateProductState> {
+
+  /**
+   * _intent permet à plusieurs boutons de partager le même formulaire
+   * et le même useActionState, sans créer d'actions séparées.
+   * Le bouton qui soumet ajoute son intent via name="intent" value="...".
+   */
+  if (formData.get("_intent") === "test_error") {
+    return { error: "Erreur de test déclenchée manuellement." };
+  }
+
   const raw = {
     name: formData.get("name"),
     description: formData.get("description"),
@@ -34,22 +36,30 @@ export async function updateProduct(
     brand: formData.get("brand"),
   };
 
-  // safeParse ne lève jamais d'exception
   const result = ProductUpdateSchema.safeParse(raw);
 
   if (!result.success) {
-    // flatten() transforme les erreurs Zod en { fieldErrors: { name: ["..."] } }
-    return { errors: result.error.flatten().fieldErrors };
+    return { errors: z.flattenError(result.error).fieldErrors };
   }
 
-  await prisma.product.update({
-    where: { id },
-    data: { ...result.data, updatedAt: new Date() },
-  });
+  /**
+   * On entoure l'appel Prisma d'un try/catch.
+   * Sans ça, une exception non gérée remonte au client comme erreur React
+   * (écran rouge en dev, page blanche en prod) — pas de message propre.
+   * Ici on intercepte et on retourne { error } pour que le formulaire
+   * l'affiche comme n'importe quel autre état.
+   */
+  try {
+    await prisma.product.update({
+      where: { id },
+      data: { ...result.data, updatedAt: new Date() },
+    });
+  } catch (e) {
+    console.error("[updateProduct] Prisma error:", e);
+    return { error: "Erreur lors de la mise à jour en base de données." };
+  }
 
-  // Invalide le cache unstable_cache tagué "products" → prochain appel getProducts() re-query la DB
   revalidateTag("products", "max");
-  // Invalide aussi les pages en cache de rendu
   revalidatePath("/");
   revalidatePath("/admin/products");
 

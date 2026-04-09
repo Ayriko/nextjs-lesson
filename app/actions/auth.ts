@@ -64,9 +64,19 @@ export async function login(_prevState: State, formData: FormData): Promise<Stat
   const maxAge = 30 * 24 * 60 * 60;
 
   /**
-   * encode() crée un JWT signé avec NEXTAUTH_SECRET.
-   * On y met les mêmes champs que notre callback jwt() dans authOptions,
-   * pour que getServerSession() les retrouve correctement.
+   * next-auth détermine le nom du cookie selon si NEXTAUTH_URL commence par "https://"
+   * (pas selon NODE_ENV). On réplique exactement sa logique pour éviter le mismatch.
+   */
+  const useSecureCookie = process.env.NEXTAUTH_URL?.startsWith("https://") ?? false;
+  const cookieName = useSecureCookie
+    ? "__Secure-next-auth.session-token"
+    : "next-auth.session-token";
+
+  /**
+   * encode() crée un JWE (chiffré) avec NEXTAUTH_SECRET.
+   * IMPORTANT : ne pas passer de `salt` — getToken() interne à next-auth
+   * appelle decode() sans salt (salt = ""), donc encode et decode doivent
+   * tous les deux utiliser la clé dérivée avec salt = "".
    */
   const token = await encode({
     token: {
@@ -80,21 +90,12 @@ export async function login(_prevState: State, formData: FormData): Promise<Stat
     maxAge,
   });
 
-  /**
-   * next-auth v4 utilise "next-auth.session-token" en dev
-   * et "__Secure-next-auth.session-token" en production (HTTPS requis).
-   */
-  const isProduction = process.env.NODE_ENV === "production";
-  const cookieName = isProduction
-    ? "__Secure-next-auth.session-token"
-    : "next-auth.session-token";
-
   const cookieStore = await cookies();
   cookieStore.set(cookieName, token, {
     httpOnly: true,   // inaccessible depuis JavaScript côté client
     sameSite: "lax",  // protège contre le CSRF
     path: "/",
-    secure: isProduction,
+    secure: useSecureCookie,
     maxAge,
     expires: new Date(Date.now() + maxAge * 1000),
   });
