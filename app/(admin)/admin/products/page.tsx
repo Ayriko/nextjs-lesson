@@ -24,6 +24,7 @@ export default async function AdminProducts() {
               <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-300">Prix</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-300">Stock</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-300">SKU</th>
+              <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -41,6 +42,14 @@ export default async function AdminProducts() {
                   )}
                 </td>
                 <td className="px-4 py-3 text-zinc-400 font-mono text-xs">{product.sku}</td>
+                <td className="px-4 py-3 text-right">
+                  <Link
+                    href={`/admin/products/${product.id}`}
+                    className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-white underline"
+                  >
+                    Modifier
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>
