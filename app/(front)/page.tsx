@@ -3,6 +3,7 @@ import { getSponsoredProducts } from "@/lib/mockshop";
 import ProductCard from "@/app/domains/catalog/components/ProductCard";
 import SponsoredProductCard from "@/app/domains/catalog/components/SponsoredProductCard";
 import RefreshSponsoredButton from "@/app/domains/catalog/components/RefreshSponsoredButton";
+import DevTools from "@/app/components/DevTools";
 
 export default async function Home() {
   const [products, sponsored] = await Promise.all([
@@ -128,6 +129,10 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      <div className="mx-auto max-w-screen-2xl px-8 pb-8">
+        <DevTools />
+      </div>
     </div>
   );
 }

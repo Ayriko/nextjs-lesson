@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.page-transition {
+  animation: page-fade-in 0.5s ease-out;
+}
+
 :root {
   --bg: #F6F2EC;
   --surface: #EDE8DF;
