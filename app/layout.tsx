@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import Providers from "@/app/components/Providers";
+import { WebVitals } from "@/app/components/WebVitals";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -18,8 +19,23 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "Ma boutique trop bien",
-  description: "Matériel technologique de qualité supérieure.",
+  title: {
+    default: "Ma boutique trop bien",
+    template: "%s | Ma boutique trop bien",
+  },
+  description: "Découvrez notre sélection de matériel technologique de qualité supérieure.",
+  keywords: ["boutique", "technologie", "high-tech", "informatique"],
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Ma boutique trop bien",
+    description: "Découvrez notre sélection de matériel technologique de qualité supérieure.",
+    siteName: "Ma boutique trop bien",
+    locale: "fr_FR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -31,6 +47,7 @@ export default function RootLayout({
     <html lang="fr">
       <body className={`${cormorant.variable} ${jost.variable} antialiased flex flex-col min-h-screen`}>
         <Providers>
+          <WebVitals />
           <Header />
           <main className="flex-grow">{children}</main>
           <Footer />
